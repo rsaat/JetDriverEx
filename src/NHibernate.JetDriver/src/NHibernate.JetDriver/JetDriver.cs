@@ -27,6 +27,11 @@ namespace NHibernate.JetDriver
 
 		private readonly IDictionary _queryCache = new Hashtable();
 
+        protected IDbCommand GenerateCommandOleDBDriver(CommandType type, SqlString sqlString, SqlType[] parameterTypes)
+        {
+            return base.GenerateCommand(type, sqlString, parameterTypes);
+        }
+
 		public override IDbCommand GenerateCommand(CommandType type, SqlString sqlString, SqlType[] parameterTypes)
 		{
 		    SqlString final = IsSelectStatement(sqlString) ? FinalizeJoins(sqlString) : sqlString;
@@ -82,14 +87,14 @@ namespace NHibernate.JetDriver
 		/// </summary>
 		/// <param name="sqlString">the sqlstring to transform</param>
 		/// <returns>sqlstring with parenthesized joins.</returns>
-		private SqlString FinalizeJoins(SqlString sqlString)
+		protected SqlString FinalizeJoins(SqlString sqlString)
 		{
 			if (_queryCache.Contains(sqlString))
 			{
 				return (SqlString) _queryCache[sqlString];
 			}
 
-			var beginOfFrom = sqlString.IndexOfCaseInsensitive(FromClause);
+            var beginOfFrom = sqlString.IndexOfCaseInsensitive(FromClause);
 			var endOfFrom = sqlString.IndexOfCaseInsensitive(WhereClause);
 			var beginOfOrderBy = sqlString.IndexOfCaseInsensitive(OrderByClause);
             
@@ -131,7 +136,7 @@ namespace NHibernate.JetDriver
 
             if (string.IsNullOrEmpty(processWhereJoins))
             {
-                final.Add(sqlString.Substring(endOfFrom));
+			final.Add(sqlString.Substring(endOfFrom));
             }
             else
             {
@@ -139,10 +144,74 @@ namespace NHibernate.JetDriver
             }
 
 			SqlString ret = final.ToSqlString();
+
+            RestoreMissingParameters(sqlString, ref ret);
+
 			_queryCache[sqlString] = ret;
 
 			return ret;
 		}
+
+        private void RestoreMissingParameters(SqlString originalSQL, ref SqlString transformedSQL)
+        {
+            if (originalSQL.Equals(transformedSQL))
+             {
+                     return;
+             }
+             
+            var parametersOriginal = new ArrayList();
+            var parametersTransformed = new ArrayList();
+
+
+            foreach (var part in originalSQL.Parts)
+            {
+                if (part is Parameter)
+                {
+                    parametersOriginal.Add(part);
+                }
+            }
+
+            foreach (var part in transformedSQL.Parts)
+            {
+                if (part is Parameter)
+                {
+                    parametersTransformed.Add(part);
+                }
+            }
+
+            //same number of parameters , return 
+            if (parametersOriginal.Count==parametersTransformed.Count)
+            {
+                return; 
+            }
+
+            //fix missing parameters spliting around '?'  
+            var sqlText  = transformedSQL.ToString();
+            var parametersParts = sqlText.Split('?');
+
+            if ((parametersParts.Length - 1) != parametersOriginal.Count)
+            {
+                //can´t restore 
+                var msg =  "FinalizeJoins JetDriver removed SQL parameteres and can not be restored"; 
+                logger.Error(msg);
+				throw new QueryException(msg);
+            }
+
+            var sqlBuilder = new SqlStringBuilder();
+
+            for (int i = 0; i < parametersParts.Length; i++)
+            {
+                if (i>0)
+	            {
+            	  sqlBuilder.AddObject(parametersOriginal[i-1]);  	 
+	            }
+
+                sqlBuilder.Add(parametersParts[i]);
+            }
+
+            transformedSQL = sqlBuilder.ToSqlString();
+                   
+        }
 
 		private string TransformFromClause(string fromClause)
 		{

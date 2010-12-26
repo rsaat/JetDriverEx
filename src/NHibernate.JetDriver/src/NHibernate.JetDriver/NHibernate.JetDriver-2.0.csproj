@@ -21,12 +21,11 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NHibernate.JetDriver</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -77,14 +76,16 @@
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net\2.0\log4net.dll</HintPath>
+      <HintPath>..\..\..\unhaddins\Lib\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=2.0.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net\2.0\NHibernate.dll</HintPath>
+    <Reference Include="MacroScope">
+      <HintPath>..\..\lib\net\3.5\MacroScope.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
@@ -97,6 +98,11 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="JetCoalesceFunction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="JetLocateFunction.cs" />
+    <Compile Include="JetCastFunction.cs" />
     <Compile Include="JetCaseFragment.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -112,12 +118,31 @@
     <Compile Include="JetDialect.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="JetDialectEx.cs" />
     <Compile Include="JetDriver.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="JetDriverEx.cs" />
     <Compile Include="JetJoinFragment.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="JetNullIFFunction.cs" />
+    <Compile Include="SqlFixes\SqlStringFixAggregateDistinct.cs" />
+    <Compile Include="SqlFixes\SqlStringFix.cs" />
+    <Compile Include="SqlFixes\SqlStringFixCaseWhen.cs" />
+    <Compile Include="SqlFixes\SqlStringFixExtract.cs" />
+    <Compile Include="SqlFixes\SqlStringFixLocateFunction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProblemasDriverJet.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\NhibernateHG\nhibernate\src\NHibernate\NHibernate.csproj">
+      <Project>{5909BFE7-93CF-4E5F-BE22-6293368AF01D}</Project>
+      <Name>NHibernate</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

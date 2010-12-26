@@ -1,0 +1,65 @@
+﻿Problemas Jet 
+- Campo com tipo Decimal e AVG = usar double 
+- Campo booleno usar opção usar 0 e 1 e tranformar em byte 
+- Decimal=>double 
+-date
+-IndexOf('a',3)
+locate - change parameter order 
+
+Linq 
+function Boolean 1=true 
+extract 
+Case When
+= null
+
+test
+ouutput 
+
+
+DLinq42-> n+1 select problem
+
+DLinq52-> n+1 select problem
+
+Verificar com SQL Sever 
+***** NHibernate.Test.Linq.LinqQuerySamples.DLinq49
+NHibernate: 
+    select
+        productcat1_.CategoryId as col_0_0_,
+        (count(*) ) as col_1_0_ 
+    from
+        Products product0_ 
+    left outer join
+        Categories productcat1_ 
+            on product0_.CategoryId=productcat1_.CategoryId 
+    where
+        (
+            select
+                (count(*) ) 
+            from
+                Products product0_
+        )>=@p0 
+    group by
+        productcat1_.CategoryId;
+    @p0 = 10 [Type: Int32 (0)]
+    
+DLinq60- verificar se pode chamar top Access 
+
+
+***** NHibernate.Test.Criteria.CriteriaQueryTest.CloningProjectionsTest
+NHibernate.Test.Criteria.CriteriaQueryTest.ProjectionsTest
+count(distinct this_.studentId) as y0_ 
+
+***** NHibernate.Test.Criteria.CriteriaQueryTest.EscapeCharacter
+like lcase(@p0) escape '&'
+
+NHibernate.Test.Criteria.CriteriaQueryTest.SameColumnAndAliasNames
+Access não permite order by Alias 
+
+NHibernate.Test.Criteria.CriteriaQueryTest.TestSubcriteriaBeingNull
+Casts não chamado 
+
+
+
+
+
+

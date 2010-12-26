@@ -78,30 +78,59 @@ namespace NHibernate.JetDriver
 					continue;
 				switch (p.DbType)
 				{
+                    case DbType.Decimal:
+
+                        p.DbType = DbType.Double;
+
+                        if (p.Value != DBNull.Value)
+                        {
+                            p.Value = Convert.ToDouble(p.Value);
+                        }
+
+                        break;
+                    case DbType.Boolean:
+                        //option to use byte type as boolean 1=true and 0=false
+                        if (false)
+                        {
+                            p.DbType = DbType.Byte;
+
+                            if (p.Value != DBNull.Value)
+                            {
+                                p.Value = (Convert.ToInt32(p.Value) == 0) ? 0 : 1;
+                            }
+                            else
+                            {
+                                p.Value = 0;
+                            }
+                        }
+
+                        break;
 					case DbType.DateTime:
 					case DbType.Time:
 					case DbType.Date:
-						if (p.Value != DBNull.Value)
-						{
-							p.DbType = DbType.String;
-							p.Value = GetNormalizedDateValue((DateTime)p.Value);
-                            AddToConvertedDate(p);
-						}
+                        
+                        ((OleDbParameter)p).OleDbType = OleDbType.Date;
+						
 						break;
                     case DbType.String:
                         if(_convertedDateParameters.Contains(p))
                         {
-                            //Someimes two pass conversion makes a parameter value
+                            //Sometimes two pass conversion makes a parameter value
                             //of type DateTime to be of String Dbtype
-                            DateTime date = DateTime.Parse(p.Value.ToString());
+                            DateTime date;
+                            if (!DateTime.TryParse(p.Value.ToString(),out date)){
+                                date = new DateTime(1, 1, 1);
+                            }
                             p.Value = GetNormalizedDateValue(date);
                         }
                         break;
+
+             
 					case DbType.Int64:
 						if (p.Value != DBNull.Value)
 						{
 							p.DbType = DbType.Int32;
-							int normalizedLongValue = Convert.ToInt32((long)p.Value);
+							int normalizedLongValue = Convert.ToInt32(p.Value);
 							Log.DebugFormat("Changing Int64 parameter value to [{0}] as Int32, to avoid DB confusion", normalizedLongValue);
 							p.Value = normalizedLongValue;
 						}

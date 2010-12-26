@@ -232,7 +232,7 @@ namespace NHibernate.JetDriver
 		/// Create an <c>CaseFragment</c> for this dialect
 		/// </summary>
 		/// <returns></returns>
-		public override CaseFragment CreateCaseFragment()
+		public   override CaseFragment CreateCaseFragment()
 		{
 			return new JetCaseFragment(this);
 		}

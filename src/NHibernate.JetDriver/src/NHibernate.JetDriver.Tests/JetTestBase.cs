@@ -16,7 +16,7 @@ namespace NHibernate.JetDriver.Tests
 {
     public abstract class JetTestBase
     {
-        private readonly JetDriver jetDriver = new JetDriver();
+        private readonly JetDriver jetDriver = new JetDriverEx();
         private readonly SqlType[] dummyParameterTypes = { };
         private readonly Configuration configuration;
         private readonly ISessionFactory factory;
@@ -36,6 +36,7 @@ namespace NHibernate.JetDriver.Tests
                 .SetProperty(Environment.ConnectionProvider, typeof(DriverConnectionProvider).FullName)
                 .SetProperty(Environment.ShowSql, "true")
                 .SetProperty(Environment.ConnectionString, string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};", DataFile));
+                .SetProperty(Environment.FormatSql, "true");
 
             AddMappings();
             AddEntities();
