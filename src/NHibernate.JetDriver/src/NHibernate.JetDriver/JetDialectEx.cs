@@ -38,14 +38,8 @@ namespace NHibernate.JetDriver
 
 
            RegisterColumnType(DbType.Int64, "INT");      
-           //RegisterColumnType(DbType.Boolean, "BYTE");
            RegisterColumnType(DbType.Decimal, "FLOAT");
            RegisterColumnType(DbType.Decimal, 19, "FLOAT");
-           RegisterColumnType(DbType.Guid, "UNIQUEIDENTIFIER");
-
-           RegisterKeyword("Value");
-           RegisterKeyword("Output");
-           RegisterKeyword("Password");
           
        }
 
@@ -80,7 +74,7 @@ namespace NHibernate.JetDriver
        {
            if (offset > 0)
            {
-               throw new NotSupportedException("SQL Server does not support an offset");
+               throw new NotSupportedException("Jet does not support an offset");
            }
 
            /*
