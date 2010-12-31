@@ -2,10 +2,13 @@
 using System.Data;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using NHibernate.Dialect.Function;
 using System.Text.RegularExpressions;
+using NHibernate.Dialect.Schema;
+using NHibernate.JetDriver.Schema;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;
 using NHibernate.Engine;
@@ -108,6 +111,13 @@ namespace NHibernate.JetDriver
                return 6;
            }
            throw new NotSupportedException("The query should start with 'SELECT' or 'SELECT DISTINCT'");
+       }
+
+
+       public override IDataBaseSchema GetDataBaseSchema(DbConnection connection)
+       {
+           var jetConnection = (JetDbConnection) connection;
+           return new JetDataBaseSchema(jetConnection.Connection);
        }
 
 
