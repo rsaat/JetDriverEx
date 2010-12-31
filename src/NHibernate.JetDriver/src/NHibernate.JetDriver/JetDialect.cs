@@ -77,7 +77,6 @@ namespace NHibernate.JetDriver
 			RegisterColumnType(DbType.String, "TEXT(255)");
             RegisterColumnType(DbType.String, 255, "TEXT($l)");
 			RegisterColumnType(DbType.String, 1073741823, "MEMO");
-			//RegisterColumnType(DbType.String, 1073741823, "MEMO");
 			RegisterColumnType(DbType.Time, "DATETIME");
 
             RegisterFunction("upper", new StandardSQLFunction("ucase"));
