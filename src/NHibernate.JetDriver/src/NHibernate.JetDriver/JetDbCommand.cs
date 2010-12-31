@@ -183,7 +183,16 @@ namespace NHibernate.JetDriver
 		public override int ExecuteNonQuery()
 		{
 			CheckParameters();
-			return Command.ExecuteNonQuery();
+		    try
+		    {
+                return Command.ExecuteNonQuery();
+		    }
+		    catch (Exception ex )
+		    {
+                Log.ErrorFormat("sql:{0} msg:{1}", Command.CommandText, ex.Message);
+		        throw;
+		    }
+			
 		}
 
 		public override int CommandTimeout
