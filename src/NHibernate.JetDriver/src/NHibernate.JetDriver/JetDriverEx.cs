@@ -30,7 +30,9 @@ namespace NHibernate.JetDriver
          private SqlStringFix[] _sqlFixes ={new SqlStringFixExtract(),
                                             new SqlStringFixCaseWhen(),
                                             new SqlStringFixLocateFunction(),
-                                            new SqlStringFixAggregateDistinct()};
+                                            new SqlStringFixAggregateDistinct(),
+                                            new SqlStringFixCastFunction(),
+                                            new SqlStringFixOrderByAlias()};
 
         /// <summary>Use GenerateCommand to fix Jet issues or temporary 
         ///          bugs of NHibernate that affect JetDriver

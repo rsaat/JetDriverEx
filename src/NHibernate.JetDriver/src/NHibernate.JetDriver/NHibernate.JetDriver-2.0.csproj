@@ -135,10 +135,14 @@
     <Compile Include="SqlFixes\SqlStringFixAggregateDistinct.cs" />
     <Compile Include="SqlFixes\SqlStringFix.cs" />
     <Compile Include="SqlFixes\SqlStringFixCaseWhen.cs" />
+    <Compile Include="SqlFixes\SqlStringFixCastFunction.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SqlFixes\SqlStringFixExtract.cs" />
     <Compile Include="SqlFixes\SqlStringFixLocateFunction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SqlFixes\SqlStringFixOrderbyAlias.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProblemasDriverJet.txt" />
