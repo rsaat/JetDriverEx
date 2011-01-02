@@ -12,6 +12,7 @@ namespace NHibernate.JetDriver.SqlFixes
 {
     /// <summary>Fix Cast function not called.
     ///   example test:  NHibernate.Test.Criteria.CriteriaQueryTest.CloningProjectionsTest
+    ///   //jet sql access limitation
     /// </summary>
     public class SqlStringFixOrderByAlias : SqlStringFix
     {

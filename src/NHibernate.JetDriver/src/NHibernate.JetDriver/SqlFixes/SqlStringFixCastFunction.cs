@@ -12,6 +12,8 @@ namespace NHibernate.JetDriver.SqlFixes
 {
     /// <summary>Fix Cast function not called.
     ///   example test:  NHibernate.Test.Criteria.CriteriaQueryTest.CloningProjectionsTest
+    ///  Cast HqlFunctions
+    ///  hql = "from Animal a where str(123) = '123'";
     /// </summary>
     public class SqlStringFixCastFunction : SqlStringFix
     {
