@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="JetNullIFFunction.cs" />
     <Compile Include="Schema\JetMetaData.cs" />
+    <Compile Include="SqlFixes\SqlStringFixUpperLowerFunction.cs" />
     <Compile Include="SqlFixes\SqlStringFixAggregateDistinct.cs" />
     <Compile Include="SqlFixes\SqlStringFix.cs" />
     <Compile Include="SqlFixes\SqlStringFixCaseWhen.cs" />
