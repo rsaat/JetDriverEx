@@ -63,27 +63,40 @@ namespace NHibernate.JetDriver
             {
                 var functionname = _JetConversionFunctions[sqlType];
 
-                sb.Add("iif");
-                sb.Add("(");
+                var sqlArg = arg.ToString(); 
 
-                sb.Add("ISNULL");
-                sb.Add("(");
-                sb.AddObject(arg);
-                sb.Add(")");
+                if (sqlArg.IndexOf("?")>=0)
+                {
+                    sb.Add((string)functionname);
+                    sb.Add("(");
+                    sb.AddObject(arg);
+                    sb.Add(")");
+                }
+                else
+                {
+                    sb.Add("iif");
+                    sb.Add("(");
 
-                sb.Add(",");
-                sb.Add("NULL");
+                    sb.Add("ISNULL");
+                    sb.Add("(");
+                    sb.AddObject(arg);
+                    sb.Add(")");
 
-                sb.Add(",");
+                    sb.Add(",");
+                    sb.Add("NULL");
 
-                sb.Add((string)functionname);
+                    sb.Add(",");
 
-                sb.Add("(");
-                sb.AddObject(arg);
-                sb.Add(")");
+                    sb.Add((string)functionname);
 
-               
-                sb.Add(")");
+                    sb.Add("(");
+                    sb.AddObject(arg);
+                    sb.Add(")");
+
+                    sb.Add(")"); 
+                }
+
+            
 
                 //sb.Add((string)_JetConversionFunctions[sqlType]);
                 //sb.Add("(");
