@@ -51,6 +51,13 @@ namespace NHibernate.JetDriver.Schema
             return schemaTable;
         }
 
+        public override ISet<string> GetReservedWords()
+        {
+            var reserverWords =  base.GetReservedWords();
+            reserverWords.Add("action");
+            return reserverWords;
+        }
+
 
 	}
 
