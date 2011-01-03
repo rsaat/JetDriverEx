@@ -72,6 +72,7 @@ namespace NHibernate.JetDriver
 		{
 			if (Command.Parameters.Count == 0) return;
 
+           
 			foreach (IDataParameter p in Command.Parameters)
 			{
 				if (p.Direction == ParameterDirection.Output || p.Direction == ParameterDirection.ReturnValue)
@@ -112,25 +113,25 @@ namespace NHibernate.JetDriver
                         ((OleDbParameter)p).OleDbType = OleDbType.Date;
 						
 						break;
-                    case DbType.String:
-                        if(_convertedDateParameters.Contains(p))
-                        {
-                            //Sometimes two pass conversion makes a parameter value
-                            //of type DateTime to be of String Dbtype
-                            DateTime date;
-                            if (!DateTime.TryParse(p.Value.ToString(),out date)){
-                                date = new DateTime(1, 1, 1);
-                            }
-                            p.Value = GetNormalizedDateValue(date);
-                        }
-                        break;
-
-             
+                 
 					case DbType.Int64:
 						if (p.Value != DBNull.Value)
-						{	
-							p.DbType = DbType.Int32;
-							int normalizedLongValue = Convert.ToInt32(p.Value);
+						{
+                            p.DbType = DbType.Int32;
+						    
+                            long value = Convert.ToInt64(p.Value);
+
+                            if (value > Convert.ToInt64(int.MaxValue))
+                            {
+                                value = Convert.ToInt64(int.MaxValue);
+                            }
+                            if (value < Convert.ToInt64(int.MinValue))
+                            {
+                                value = Convert.ToInt64(int.MinValue);
+                            }
+                            
+                            int normalizedLongValue = Convert.ToInt32(value);
+
 							Log.DebugFormat("Changing Int64 parameter value to [{0}] as Int32, to avoid DB confusion", normalizedLongValue);
 							p.Value = normalizedLongValue;
 						}
@@ -139,19 +140,7 @@ namespace NHibernate.JetDriver
 			}
 		}
 
-	    private void AddToConvertedDate(IDataParameter parameter)
-	    {
-	        _convertedDateParameters.Add(parameter);
-	    }
-
-	    private string GetNormalizedDateValue(DateTime date)
-        {
-            string normalizedDateValue = date.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
-            Log.DebugFormat("Changing datetime parameter value to [{0}] as string, to avoid DB confusion", normalizedDateValue);
-
-            return normalizedDateValue;
-        }
-
+	 
 		public override void Cancel()
 		{
 			Command.Cancel();
@@ -197,6 +186,7 @@ namespace NHibernate.JetDriver
                     || txt.ToLower().Contains("references `container_`") 
                     || txt.ToLower().Contains("references many")
                     || txt.ToLower().Contains("references contained")
+                    || txt.ToLower().Contains("foreign key (id) references item")
                     )
                 {
                     Log.ErrorFormat("ignored for testing sql:{0} msg:{1}", Command.CommandText, ex.Message);
