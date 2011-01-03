@@ -32,7 +32,8 @@ namespace NHibernate.JetDriver
                                             new SqlStringFixLocateFunction(),
                                             new SqlStringFixAggregateDistinct(),
                                             new SqlStringFixCastFunction(),
-                                            new SqlStringFixOrderByAlias()};
+                                            new SqlStringFixOrderByAlias(),
+                                            new SqlStringFixUpperLowerFunction()};
 
         /// <summary>Use GenerateCommand to fix Jet issues or temporary 
         ///          bugs of NHibernate that affect JetDriver
@@ -97,7 +98,7 @@ namespace NHibernate.JetDriver
 
                 var sb = new SqlStringBuilder();
                 string accessFrom;
-                var useMacroScope = false;
+                var useMacroScope = true;
 
                 //convert ansi from to access from
                 if (useMacroScope)
@@ -127,6 +128,10 @@ namespace NHibernate.JetDriver
                     sb.Add(accessFrom);
                     sb.Add(final.Substring(start + ansiJoinWithEndMarker.Length));
                     final=sb.ToSqlString(); 
+                }
+                else
+                {
+                    throw new InvalidOperationException("invalid from sql. Verify if from part has parameters. Jet does not support from clause with parameters. " + ansiFrom);
                 }
 
             }
