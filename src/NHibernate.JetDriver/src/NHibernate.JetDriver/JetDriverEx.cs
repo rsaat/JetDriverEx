@@ -88,54 +88,62 @@ namespace NHibernate.JetDriver
 
             }
 
-            final = RestoreParameters(parametersOriginal,sqlFixed);    
+            final = RestoreParameters(parametersOriginal,sqlFixed);
 
-            var fromParts = ExtractFromParts(final);
-            
-            foreach (var ansiJoinWithEndMarker in fromParts)
+            if (final.IndexOfCaseInsensitive(" union ") < 0)
             {
-                var ansiFrom = ansiJoinWithEndMarker.Replace(JetJoinFragment.ENDJOIN, "");
 
-                var sb = new SqlStringBuilder();
-                string accessFrom;
-                var useMacroScope = true;
+                var fromParts = ExtractFromParts(final);
 
-                //convert ansi from to access from
-                if (useMacroScope)
+                foreach (var ansiJoinWithEndMarker in fromParts)
                 {
-                    IStatement statement = Factory.CreateStatement("SELECT *" + ansiFrom);
-                    var tailor = new MAccessTailor();
-                    statement.Traverse(tailor);
-                    Stringifier stringifier = new Stringifier();
-                    statement.Traverse(stringifier);
-                    accessFrom = stringifier.ToSql();
-                    accessFrom = accessFrom.Replace("SELECT *", "");
+                    var ansiFrom = ansiJoinWithEndMarker.Replace(JetJoinFragment.ENDJOIN, "");
+
+                    var sb = new SqlStringBuilder();
+                    string accessFrom;
+                    var useMacroScope = true;
+
+                    //convert ansi from to access from
+                    if (useMacroScope)
+                    {
+                        IStatement statement = Factory.CreateStatement("SELECT *" + ansiFrom);
+                        var tailor = new MAccessTailor();
+                        statement.Traverse(tailor);
+                        Stringifier stringifier = new Stringifier();
+                        statement.Traverse(stringifier);
+                        accessFrom = stringifier.ToSql();
+                        accessFrom = accessFrom.Replace("SELECT *", "");
+
+                    }
+                    else
+                    {
+                        sb.Add("SELECT *" + ansiFrom);
+                        var sqlJetFrom = FinalizeJoins(sb.ToSqlString());
+                        sqlJetFrom = sqlJetFrom.Replace("SELECT *", "");
+                        accessFrom = sqlJetFrom.ToString();
+                    }
+
+                    var start = final.IndexOfCaseInsensitive(ansiJoinWithEndMarker);
+                    sb = new SqlStringBuilder();
+                    if (start > 0)
+                    {
+                        sb.Add(final.Substring(0, start));
+                        sb.Add(accessFrom);
+                        sb.Add(final.Substring(start + ansiJoinWithEndMarker.Length));
+                        final = sb.ToSqlString();
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("invalid from sql. Verify if from part has parameters. Jet does not support from clause with parameters. " + ansiFrom);
+                    }
 
                 }
-                else
-                {
-                    sb.Add("SELECT *" + ansiFrom);
-                    var sqlJetFrom = FinalizeJoins(sb.ToSqlString());
-                    sqlJetFrom = sqlJetFrom.Replace("SELECT *", "");
-                    accessFrom = sqlJetFrom.ToString();
-                }
 
-                var start = final.IndexOfCaseInsensitive(ansiJoinWithEndMarker);
-                sb = new SqlStringBuilder();
-                if (start > 0)
-                {
-                    sb.Add(final.Substring(0,start));
-                    sb.Add(accessFrom);
-                    sb.Add(final.Substring(start + ansiJoinWithEndMarker.Length));
-                    final=sb.ToSqlString(); 
-                }
-                else
-                {
-                    throw new InvalidOperationException("invalid from sql. Verify if from part has parameters. Jet does not support from clause with parameters. " + ansiFrom);
-                }
-
+            }//union
+            else
+            {
+                final = final.Replace(JetJoinFragment.ENDJOIN, "");
             }
-                     
 
             return base.GenerateCommandOleDBDriver(type, final, parameterTypes);
 
