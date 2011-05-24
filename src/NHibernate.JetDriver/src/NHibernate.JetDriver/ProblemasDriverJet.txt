@@ -59,6 +59,22 @@ NHibernate.Test.Criteria.CriteriaQueryTest.TestSubcriteriaBeingNull
 Casts não chamado 
 
 
+Nhibernate Tests Linq 
+
+Function AssertByIds
+
+		    var q = new[] {2, 1, 3};
+            AssertByIds(q1, new[] { 1, 2, 3 }, x => x);
+
+Verificar ConnectionTest
+
+Criteria
+  Count Distict 
+  EscapeCharacter 
+
+
+
+
 
 
 
