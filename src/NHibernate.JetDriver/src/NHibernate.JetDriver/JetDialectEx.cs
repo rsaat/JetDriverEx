@@ -34,6 +34,7 @@ namespace NHibernate.JetDriver
            RegisterFunction("sqrt", new SQLFunctionTemplate(NHibernateUtil.Double, "Sqr(?1)"));
            RegisterFunction("mod", new SQLFunctionTemplate(NHibernateUtil.Int32, "(?1 Mod ?2)"));
            RegisterFunction("nullif", new JetNullIfFunction());
+           RegisterFunction("trim", new JetAnsiTrimEmulationFunction());
 
 
 
@@ -63,6 +64,15 @@ namespace NHibernate.JetDriver
            get { return true; }
        }
 
+
+       /// <summary>
+       /// Can parameters be used for a statement containing a LIMIT?
+       /// </summary>
+       public override bool SupportsVariableLimit
+       {
+           get { return true; }
+       }
+
        /// <summary>
        /// Add a <c>LIMIT (TOP)</c> clause to the given SQL <c>SELECT</c>
        /// </summary>
@@ -70,18 +80,17 @@ namespace NHibernate.JetDriver
        /// <param name="limit">Maximum number of rows to be returned by the query</param>
        /// <param name="offset">Offset of the first row to process in the result set</param>
        /// <returns>A new SqlString that contains the <c>LIMIT</c> clause.</returns>
-       public override SqlString GetLimitString(SqlString querySqlString, int offset, int limit)
+       public override SqlString GetLimitString(SqlString querySqlString, SqlString offset, SqlString limit)
        {
-           if (offset > 0)
-           {
-               throw new NotSupportedException("Jet does not support an offset");
-           }
-
            /*
-            * "SELECT TOP limit rest-of-sql-statement"
-            */
+			 * "SELECT TOP limit rest-of-sql-statement"
+			 */
 
-           return querySqlString.Insert(GetAfterSelectInsertPoint(querySqlString), " top " + limit);
+           SqlStringBuilder topFragment = new SqlStringBuilder();
+           topFragment.Add(" top ");
+           topFragment.Add(limit);
+
+           return querySqlString.Insert(GetAfterSelectInsertPoint(querySqlString), topFragment.ToSqlString());
        }
 
        /// <summary>
