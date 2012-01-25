@@ -150,7 +150,7 @@
     <Content Include="ProblemasDriverJet.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\NhibernateHG\nhibernate\src\NHibernate\NHibernate.csproj">
+    <ProjectReference Include="..\..\..\..\..\nhibernateJet\src\NHibernate\NHibernate.csproj">
       <Project>{5909BFE7-93CF-4E5F-BE22-6293368AF01D}</Project>
       <Name>NHibernate</Name>
     </ProjectReference>
