@@ -22,9 +22,8 @@ namespace NHibernate.JetDriver
        {
            RegisterFunction("concat", new VarArgsSQLFunction(NHibernateUtil.String, "(", "+", ")"));
            RegisterFunction("length", new StandardSQLFunction("len", NHibernateUtil.Int32));
-           RegisterFunction("substring", new SQLFunctionTemplate(NHibernateUtil.String, "mid(?1, ?2+1, ?3)"));
-           //HQL RegisterFunction("substring", new SQLFunctionTemplate(NHibernateUtil.String, "mid(?1, ?2, ?3)"));
-           //RegisterFunction("locate",new JetLocateFunction());//new SQLFunctionTemplate(NHibernateUtil.Int32, "(instr(?3+1,?2,?1)-1)"));
+           RegisterFunction("substring", new SQLFunctionTemplate(NHibernateUtil.String, "mid(?1, ?2, ?3)"));
+          //RegisterFunction("locate",new JetLocateFunction());//new SQLFunctionTemplate(NHibernateUtil.Int32, "(instr(?3+1,?2,?1)-1)"));
            RegisterFunction("cast", new JetCastFunction());
            //LINQ not calling extract dialect function 
            //RegisterFunction("extract", new StandardSQLFunction("jetextract", NHibernateUtil.Int32));

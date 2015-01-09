@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using NHibernate.Dialect.Schema;
-using Iesi.Collections.Generic;
 using System.Collections.Generic;
 
 namespace NHibernate.JetDriver.Schema
@@ -51,7 +50,7 @@ namespace NHibernate.JetDriver.Schema
             return schemaTable;
         }
 
-        public override ISet<string> GetReservedWords()
+        public override System.Collections.Generic.ISet<string> GetReservedWords()
         {
             var reserverWords =  base.GetReservedWords();
             reserverWords.Add("action");

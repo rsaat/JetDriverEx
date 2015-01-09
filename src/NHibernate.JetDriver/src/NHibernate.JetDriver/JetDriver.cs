@@ -163,7 +163,7 @@ namespace NHibernate.JetDriver
             var parametersTransformed = new ArrayList();
 
 
-            foreach (var part in originalSQL.Parts)
+            foreach (var part in originalSQL)
             {
                 if (part is Parameter)
                 {
@@ -171,7 +171,7 @@ namespace NHibernate.JetDriver
                 }
             }
 
-            foreach (var part in transformedSQL.Parts)
+            foreach (var part in transformedSQL)
             {
                 if (part is Parameter)
                 {
