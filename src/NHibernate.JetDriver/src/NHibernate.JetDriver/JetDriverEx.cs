@@ -8,13 +8,12 @@ using System.Text.RegularExpressions;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;
 using NHibernate.Driver;
-using MacroScope;
 
 using NHibernate.JetDriver.SqlFixes;
 
 namespace NHibernate.JetDriver
 {
-    public class JetDriverEx:JetDriver
+    public class JetDriverEx : JetDriver
     {
         /// <summary>Use Access with named parameter (p0, p1 ..) and not "?" </summary>
         /// <value>true to use named parameter</value>
@@ -27,7 +26,7 @@ namespace NHibernate.JetDriver
         }
 
         /// <summary>List of Fixes</summary>
-         private SqlStringFix[] _sqlFixes ={new SqlStringFixExtract(),
+        private SqlStringFix[] _sqlFixes ={new SqlStringFixExtract(),
                                             new SqlStringFixCaseWhen(),
                                             new SqlStringFixLocateFunction(),
                                             new SqlStringFixAggregateDistinct(),
@@ -66,11 +65,11 @@ namespace NHibernate.JetDriver
             int i = 0;
             foreach (var param in parametersOriginal)
             {
-                if (param.ParameterPosition==null)
+                if (param.ParameterPosition == null)
                 {
                     param.ParameterPosition = i;
                 }
-                sql = regexReplaceParam.Replace(sql, String.Format("@p{0}", param.ParameterPosition),1);
+                sql = regexReplaceParam.Replace(sql, String.Format("@p{0}", param.ParameterPosition), 1);
                 i++;
             }
 
@@ -80,15 +79,15 @@ namespace NHibernate.JetDriver
 
             if (_sqlFixes.Length > 0)
             {
-              
+
                 foreach (var sqlStringFix in _sqlFixes)
                 {
-                   sqlFixed = sqlStringFix.FixSql(sqlFixed);
+                    sqlFixed = sqlStringFix.FixSql(sqlFixed);
                 }
 
             }
 
-            final = RestoreParameters(parametersOriginal,sqlFixed);
+            final = RestoreParameters(parametersOriginal, sqlFixed);
 
             if (final.IndexOfCaseInsensitive(" union ") < 0)
             {
@@ -101,27 +100,11 @@ namespace NHibernate.JetDriver
 
                     var sb = new SqlStringBuilder();
                     string accessFrom;
-                    var useMacroScope = true;
 
-                    //convert ansi from to access from
-                    if (useMacroScope)
-                    {
-                        IStatement statement = Factory.CreateStatement("SELECT *" + ansiFrom);
-                        var tailor = new MAccessTailor();
-                        statement.Traverse(tailor);
-                        Stringifier stringifier = new Stringifier();
-                        statement.Traverse(stringifier);
-                        accessFrom = stringifier.ToSql();
-                        accessFrom = accessFrom.Replace("SELECT *", "");
-
-                    }
-                    else
-                    {
-                        sb.Add("SELECT *" + ansiFrom);
-                        var sqlJetFrom = FinalizeJoins(sb.ToSqlString());
-                        sqlJetFrom = sqlJetFrom.Replace("SELECT *", "");
-                        accessFrom = sqlJetFrom.ToString();
-                    }
+                    sb.Add("SELECT *" + ansiFrom);
+                    var sqlJetFrom = FinalizeJoins(sb.ToSqlString());
+                    sqlJetFrom = sqlJetFrom.Replace("SELECT *", "");
+                    accessFrom = sqlJetFrom.ToString();
 
                     var start = final.IndexOfCaseInsensitive(ansiJoinWithEndMarker);
                     sb = new SqlStringBuilder();
@@ -154,16 +137,16 @@ namespace NHibernate.JetDriver
         {
             var parts = new List<string>();
             var sql = sqlString.ToString();
-            var joinTags=ParseJoinNodes(sql);
+            var joinTags = ParseJoinNodes(sql);
 
-            
 
-            var i=0;
+
+            var i = 0;
             while (i < joinTags.Count)
             {
-                var fromStart=-1;
-                var fromEnd=-1;
-                
+                var fromStart = -1;
+                var fromEnd = -1;
+
                 while ((i < joinTags.Count) && (joinTags[i].Name == FromClause))
                 {
                     fromStart = joinTags[i].Position;
@@ -178,19 +161,19 @@ namespace NHibernate.JetDriver
 
                 if ((fromStart >= 0) && (fromEnd > fromStart))
                 {
-                        parts.Add(sql.Substring(fromStart,fromEnd+JetJoinFragment.ENDJOIN.Length-fromStart));
+                    parts.Add(sql.Substring(fromStart, fromEnd + JetJoinFragment.ENDJOIN.Length - fromStart));
                 }
 
             }
 
             return parts;
-		   
+
         }
 
         private List<JoinNode> ParseJoinNodes(string sql)
         {
 
-  
+
             var joinTags = JoinTags(sql, FromClause);
             joinTags.AddRange(JoinTags(sql, JetJoinFragment.ENDJOIN));
 
@@ -199,14 +182,14 @@ namespace NHibernate.JetDriver
                     select joinTag;
 
             return q.ToList();
-            
+
         }
 
-        private  List<JoinNode> JoinTags(string sql,string joinClause)
+        private List<JoinNode> JoinTags(string sql, string joinClause)
         {
             var joinTags = new List<JoinNode>();
             var startIndex = 0;
-            var fromIndex = sql.IndexOf(joinClause, startIndex,StringComparison.InvariantCultureIgnoreCase);
+            var fromIndex = sql.IndexOf(joinClause, startIndex, StringComparison.InvariantCultureIgnoreCase);
             while (fromIndex > 0)
             {
                 var joinNode = new JoinNode();
@@ -214,12 +197,12 @@ namespace NHibernate.JetDriver
                 joinNode.Name = joinClause;
                 joinTags.Add(joinNode);
                 startIndex = fromIndex + 1;
-                fromIndex = sql.IndexOf(joinClause, startIndex,StringComparison.InvariantCultureIgnoreCase);
+                fromIndex = sql.IndexOf(joinClause, startIndex, StringComparison.InvariantCultureIgnoreCase);
             }
             return joinTags;
         }
 
-        public const string FromClause =" from ";
+        public const string FromClause = " from ";
 
 
         private class JoinNode
@@ -228,26 +211,26 @@ namespace NHibernate.JetDriver
             public int Position { get; set; }
         }
 
-        private SqlString RestoreParameters(List<Parameter> parametersOriginal, string sqlfixed) 
+        private SqlString RestoreParameters(List<Parameter> parametersOriginal, string sqlfixed)
         {
 
-           Regex regexReplaceParamNamed = new Regex(
-             "@p\\d+",
-           RegexOptions.IgnoreCase
-           | RegexOptions.Singleline
-           | RegexOptions.CultureInvariant
-           );
+            Regex regexReplaceParamNamed = new Regex(
+              "@p\\d+",
+            RegexOptions.IgnoreCase
+            | RegexOptions.Singleline
+            | RegexOptions.CultureInvariant
+            );
 
             var matches = regexReplaceParamNamed.Matches(sqlfixed);
-            var parts=regexReplaceParamNamed.Split(sqlfixed);
+            var parts = regexReplaceParamNamed.Split(sqlfixed);
 
-             var sqlBuilder = new SqlStringBuilder();
+            var sqlBuilder = new SqlStringBuilder();
 
             for (int i = 0; i < parts.Length; i++)
             {
                 if (i > 0)
                 {
-                    var paramPos= matches[i-1].Value.Replace("@p","");
+                    var paramPos = matches[i - 1].Value.Replace("@p", "");
                     var param = parametersOriginal.Where(p => p.ParameterPosition == Convert.ToInt32(paramPos)).First();
                     sqlBuilder.AddObject(param);
                 }
@@ -326,7 +309,7 @@ namespace NHibernate.JetDriver
 
         }
 
-	
+
 
 
     }

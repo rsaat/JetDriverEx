@@ -7,12 +7,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;
-using MacroScope;
 
 namespace NHibernate.JetDriver.SqlFixes
 {
     /// <summary>Fix "Case When then else end" SQL with Access Switch. 
     ///          example test NegativeTimesheetsWithEqualsFalse   
+    ///          Needs implementation 
     /// </summary>
     public class SqlStringFixCaseWhen : SqlStringFix
     {
@@ -26,7 +26,10 @@ namespace NHibernate.JetDriver.SqlFixes
 
         public override string FixSql(string sql)
         {
-        
+
+
+            return sql;	 
+
             if (!_regexCaseWhen.IsMatch(sql))
 	        {
                 return sql;	 
@@ -38,17 +41,6 @@ namespace NHibernate.JetDriver.SqlFixes
             foreach (Match match in matches)
 	        {
                 
-                IStatement statement = Factory.CreateStatement("SELECT XXXX," + match.Value + " FROM YYYY");
-                
-                var tailor = new MAccessTailor();
-                statement.Traverse(tailor);
-                Stringifier stringifier = new Stringifier();
-                statement.Traverse(stringifier);
-                var sqlCaseWhenFixed = stringifier.ToSql();
-                sqlCaseWhenFixed = sqlCaseWhenFixed.Replace("SELECT XXXX,", "");	 
-                sqlCaseWhenFixed = sqlCaseWhenFixed.Replace("FROM YYYY", "");
-               
-                sql=sql.Replace(match.Value,sqlCaseWhenFixed);    
 	        }
 
             return sql;
