@@ -149,6 +149,11 @@
   <ItemGroup>
     <Content Include="ProblemasDriverJet.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="MergeDlls.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
